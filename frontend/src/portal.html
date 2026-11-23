@@ -1,0 +1,40 @@
+<main>
+  <header><h1>Portal de consultas</h1><p>Consulta contribuyentes, matrícula vehicular y puntos de licencia.</p></header>
+  @if (error()) { <p class="aviso" role="alert">{{ error() }}</p> }
+  <section>
+    <h2>Contribuyente</h2>
+    <form (submit)="$event.preventDefault(); consultarRuc(ruc.value)">
+      <label>Correo electrónico<input type="email" required autocomplete="email"></label>
+      <label>RUC<input #ruc required inputmode="numeric" pattern="[0-9]{13}" maxlength="13"></label>
+      <button [disabled]="pendiente() !== null">{{ pendiente() === 'ruc' ? 'Consultando…' : 'Consultar RUC' }}</button>
+    </form>
+    @if (contribuyente(); as persona) {
+      <dl><dt>Nombre</dt><dd>{{ persona.razonSocial }}</dd><dt>Tipo</dt><dd>{{ persona.tipoContribuyente }}</dd><dt>Estado</dt><dd>{{ persona.estado }}</dd></dl>
+    }
+  </section>
+  @if (contribuyente()) {
+    <section>
+      <h2>Matrícula vehicular</h2>
+      <form (submit)="$event.preventDefault(); consultarPlaca(placa.value)">
+        <label>Placa<input #placa required placeholder="ABC-1234" maxlength="8" autocapitalize="characters"></label>
+        <button [disabled]="pendiente() !== null">{{ pendiente() === 'placa' ? 'Consultando…' : 'Consultar matrícula' }}</button>
+      </form>
+      @if (matricula(); as resultado) {
+        <h3>Vehículo {{ resultado.placa }}</h3><pre>{{ resultado.vehiculo | json }}</pre>
+        <h3>Valores de matrícula</h3><pre>{{ resultado.rubros | json }}</pre>
+      }
+    </section>
+    <section>
+      <h2>Puntos de licencia</h2>
+      <form (submit)="$event.preventDefault(); consultarLicencia(cedula.value)">
+        <label>Cédula<input #cedula required inputmode="numeric" pattern="[0-9]{10}" maxlength="10"></label>
+        <button [disabled]="pendiente() !== null">{{ pendiente() === 'cedula' ? 'Consultando…' : 'Consultar puntos' }}</button>
+      </form>
+      @if (licencia(); as resultado) {
+        <p><strong>{{ resultado.puntos }} puntos</strong> · {{ resultado.consultadoEn | date:'dd/MM/yyyy HH:mm' }}</p>
+        @if (!resultado.vigente) { <p class="aviso">La ANT está indisponible. Se muestran los puntos de la consulta anterior.</p> }
+        @else if (resultado.fuente === 'CACHE') { <p>Resultado de una consulta reciente guardada.</p> }
+      }
+    </section>
+  }
+</main>

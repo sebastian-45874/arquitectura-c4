@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="servicio-ant" type="MavenRunConfiguration" factoryName="Maven">
+    <MavenSettings>
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="goals">
+            <list><option value="spring-boot:run" /></list>
+          </option>
+          <option name="workingDirPath" value="$PROJECT_DIR$/servicio-ant" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <method v="2" />
+  </configuration>
+</component>
