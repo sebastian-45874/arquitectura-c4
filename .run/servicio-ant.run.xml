@@ -4,7 +4,7 @@
       <option name="myRunnerParameters">
         <MavenRunnerParameters>
           <option name="goals">
-            <list><option value="spring-boot:run" /></list>
+            <list><option value="spring-boot:run" /><option value="-Dspring-boot.run.arguments=--portal.frontend.iniciar=true" /></list>
           </option>
           <option name="workingDirPath" value="$PROJECT_DIR$/servicio-ant" />
         </MavenRunnerParameters>

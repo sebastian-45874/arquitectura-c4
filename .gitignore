@@ -6,3 +6,5 @@ node_modules/
 dist/
 .angular/
 redis-local.properties
+frontend/.node-local
+frontend/.node-runtime/

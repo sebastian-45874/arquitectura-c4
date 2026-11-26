@@ -35,7 +35,7 @@ class PortalConsultas {
   readonly matricula = signal<Matricula | null>(null);
   readonly licencia = signal<Licencia | null>(null);
   readonly pendiente = signal<'ruc' | 'placa' | 'cedula' | null>(null);
-  readonly error = signal('');
+  readonly error = signal<{ consulta: 'ruc' | 'placa' | 'cedula'; mensaje: string } | null>(null);
 
   async consultarRuc(ruc: string): Promise<void> {
     this.contribuyente.set(null);
@@ -57,7 +57,10 @@ class PortalConsultas {
     });
   }
 
-  async consultarLicencia(cedula: string): Promise<void> {
+  async consultarLicencia(): Promise<void> {
+    const persona = this.contribuyente();
+    if (!persona) return;
+    const cedula = persona.ruc.slice(0, 10);
     this.licencia.set(null);
     await this.consultar('cedula', async () => {
       this.licencia.set(await firstValueFrom(
@@ -67,16 +70,20 @@ class PortalConsultas {
   }
 
   private async consultar(tipo: 'ruc' | 'placa' | 'cedula', accion: () => Promise<void>): Promise<void> {
-    this.error.set('');
+    this.error.set(null);
     this.pendiente.set(tipo);
     try {
       await accion();
     } catch (error) {
       const status = error instanceof HttpErrorResponse ? error.status : 0;
-      if (status === 400) this.error.set('Revisa el formato del dato ingresado.');
-      else if (status === 404) this.error.set(tipo === 'ruc' ? 'El RUC no existe.' : 'La placa no existe.');
-      else if (status === 422) this.error.set('El RUC no corresponde a una persona natural.');
-      else this.error.set('La consulta está temporalmente indisponible.');
+      let mensaje: string;
+      if (status === 400) mensaje = 'Revisa el formato del dato ingresado.';
+      else if (status === 404) mensaje = tipo === 'ruc' ? 'El RUC no existe.' : 'La placa no existe.';
+      else if (status === 422) mensaje = 'El RUC no corresponde a una persona natural.';
+      else mensaje = tipo === 'cedula'
+        ? 'No se pudieron obtener los puntos de la ANT y no hay un resultado guardado.'
+        : 'No se pudo completar la consulta al SRI.';
+      this.error.set({ consulta: tipo, mensaje });
     } finally {
       this.pendiente.set(null);
     }

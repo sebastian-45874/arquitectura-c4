@@ -2,7 +2,7 @@
   "name": "arquitectura-c4-frontend",
   "private": true,
   "scripts": {
-    "start": "ng serve",
+    "start": "ng serve --host 127.0.0.1 --port 4200 --open",
     "build": "ng build"
   },
   "dependencies": {

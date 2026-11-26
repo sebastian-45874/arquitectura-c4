@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "cli": { "cache": { "enabled": false } },
   "projects": {
     "portal": {
       "projectType": "application",
